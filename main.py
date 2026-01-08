@@ -120,3 +120,11 @@ def save_character(name: str, description: str):
 def generate_image(prompt: str):
     image_url = f"https://image.pollinations.ai/prompt/{prompt}?width=1024&height=1024&nologo=true"
     return {"url": image_url}
+
+@app.get("/get_characters")
+def get_characters():
+    if CHAR_PATH.exists():
+        with open(CHAR_PATH, "r") as f:
+            data = json.load(f)
+            return data.get("characters", [])
+    return []
