@@ -21,12 +21,12 @@ if API_KEY:
 else:
     print(f"❌ API Key is MISSING! Add it to Render Environment Variables.")
 
-if CHAR_PATH.exists():
-    print(f"✅ characters.json found.")
-else:
+if not CHAR_PATH.exists():
     print(f"⚠️ characters.json not found. Creating a blank one...")
     with open(CHAR_PATH, "w") as f:
         json.dump({"characters": [], "scenes": []}, f)
+else:
+    print(f"✅ characters.json found.")
 print("-------------------------------\n")
 
 # --- HELPER FUNCTIONS ---
@@ -109,17 +109,22 @@ def save_character(name: str, description: str):
         if CHAR_PATH.exists():
             with open(CHAR_PATH, "r") as f:
                 data = json.load(f)
-        data["characters"].append({"name": name, "description": description})
+        
+        found = False
+        for char in data["characters"]:
+            if char["name"].lower() == name.lower():
+                char["description"] = description
+                found = True
+                break
+        
+        if not found:
+            data["characters"].append({"name": name, "description": description})
+            
         with open(CHAR_PATH, "w") as f:
             json.dump(data, f, indent=4)
-        return "Character saved successfully!"
+        return "Character synced!"
     except Exception as e:
-        return f"Failed to save: {str(e)}"
-
-@app.get("/generate_image")
-def generate_image(prompt: str):
-    image_url = f"https://image.pollinations.ai/prompt/{prompt}?width=1024&height=1024&nologo=true"
-    return {"url": image_url}
+        return f"Error: {str(e)}"
 
 @app.get("/get_characters")
 def get_characters():
@@ -128,3 +133,8 @@ def get_characters():
             data = json.load(f)
             return data.get("characters", [])
     return []
+
+@app.get("/generate_image")
+def generate_image(prompt: str):
+    image_url = f"https://image.pollinations.ai/prompt/{prompt}?width=1024&height=1024&nologo=true"
+    return {"url": image_url}
