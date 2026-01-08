@@ -1,0 +1,11 @@
+{
+  "characters": [
+    {
+      "name": "Elias Thorne",
+      "description": "A weary, cynical detective in a rain-soaked noir city. He wears a tattered trench coat and speaks in short, punchy sentences. He has a magical pocket watch that stops time for 3 seconds.",
+      "traits": ["Observant", "Sarcastic", "Secretly Kind"],
+      "genre_affiliations": ["Noir", "Urban Fantasy"]
+    }
+  ],
+  "scenes": []
+}
