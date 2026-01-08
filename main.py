@@ -134,6 +134,34 @@ def get_characters():
             return data.get("characters", [])
     return []
 
+@app.get("/save_scene")
+def save_scene(title: str, content: str):
+    try:
+        data = {"characters": [], "scenes": []}
+        if CHAR_PATH.exists():
+            with open(CHAR_PATH, "r") as f:
+                data = json.load(f)
+        
+        # Ensure 'scenes' key exists
+        if "scenes" not in data:
+            data["scenes"] = []
+            
+        data["scenes"].append({"title": title, "content": content})
+        
+        with open(CHAR_PATH, "w") as f:
+            json.dump(data, f, indent=4)
+        return "Scene archived in history!"
+    except Exception as e:
+        return f"Error: {str(e)}"
+
+@app.get("/get_history")
+def get_history():
+    if CHAR_PATH.exists():
+        with open(CHAR_PATH, "r") as f:
+            data = json.load(f)
+            return data.get("scenes", [])
+    return []
+
 @app.get("/generate_image")
 def generate_image(prompt: str):
     image_url = f"https://image.pollinations.ai/prompt/{prompt}?width=1024&height=1024&nologo=true"
